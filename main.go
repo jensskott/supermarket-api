@@ -1,14 +1,31 @@
 package main
 
 import (
+	"io/ioutil"
+	"path/filepath"
+
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jensskott/supermarket-api/Cassandra"
 	"github.com/jensskott/supermarket-api/Items"
 )
 
 func main() {
+	var config Config
 
-	CassandraSession := Cassandra.Session
+	filename, _ := filepath.Abs("./config.yml")
+	yamlFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	CassandraSession := Cassandra.Connect(config.CassandraCluster)
 	defer CassandraSession.Close()
 
 	// For release mode

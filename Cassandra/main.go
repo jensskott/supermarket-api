@@ -9,10 +9,11 @@ import (
 // Session data for cassandra
 var Session *gocql.Session
 
-func init() {
+// Connect to cassandra
+func Connect(clusterIP string) *gocql.Session {
 	var err error
 
-	cluster := gocql.NewCluster("34.250.35.246")
+	cluster := gocql.NewCluster(clusterIP)
 	cluster.Keyspace = "api"
 	Session, err = cluster.CreateSession()
 	if err != nil {
@@ -20,4 +21,5 @@ func init() {
 		panic(err)
 	}
 	fmt.Println("Connected to cassandra")
+	return Session
 }

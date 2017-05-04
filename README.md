@@ -1,7 +1,9 @@
 # Supermarket api test
 
 ```sql
-CREATE KEYSPACE api WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'eu-west' : 1 };
+CREATE KEYSPACE api WITH REPLICATION = { 
+  'class' : 'NetworkTopologyStrategy', 'eu-west' : 1 
+};
 
 CREATE TABLE supermarket (
   id UUID,
@@ -18,4 +20,8 @@ curl -X POST \
 "http://localhost:8080/items/new"
 ```
 
-## supermarket-api
+## config.yml
+
+```yaml
+cassandracluster: "ip of cluster"
+```

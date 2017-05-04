@@ -16,6 +16,7 @@ func init() {
 	cluster.Keyspace = "api"
 	Session, err = cluster.CreateSession()
 	if err != nil {
+		fmt.Println("Unable to connect to cassandra")
 		panic(err)
 	}
 	fmt.Println("Connected to cassandra")

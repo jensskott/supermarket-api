@@ -1,22 +1,21 @@
 package Items
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
-	"github.com/gorilla/mux"
 	"github.com/jensskott/supermarket-api/Cassandra"
 )
 
-// GetOne function to list one item
-func GetOne(w http.ResponseWriter, r *http.Request) {
+// GetOne item
+func GetOne(c *gin.Context) {
 	var item Item
 	var errs []string
-	var found bool = false
 
-	vars := mux.Vars(r)
-	id := vars["user_uuid"]
+	found := false
+
+	id := c.Param("id")
 
 	uuid, err := gocql.ParseUUID(id)
 	if err != nil {
@@ -39,8 +38,9 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if found {
-		json.NewEncoder(w).Encode(GetItemResponse{Item: item})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &item})
 	} else {
-		json.NewEncoder(w).Encode(ErrorResponse{Errors: errs})
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": errs})
+		return
 	}
 }

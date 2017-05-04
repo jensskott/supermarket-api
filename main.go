@@ -1,34 +1,31 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/jensskott/supermarket-api/Cassandra"
 	"github.com/jensskott/supermarket-api/Items"
 )
-
-type heartbeatResponse struct {
-	Status string `json:"status"`
-	Code   int    `json:"code"`
-}
 
 func main() {
 
 	CassandraSession := Cassandra.Session
 	defer CassandraSession.Close()
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", heartbeat)
-	router.HandleFunc("/items/new", Items.Post)
-	router.HandleFunc("/items", Items.Get)
-	router.HandleFunc("/items/{item_uuid}", Items.GetOne)
+	router := gin.Default()
 
-	log.Fatal(http.ListenAndServe(":8080", router))
-}
+	v1 := router.Group("/api/v1/items")
+	{
+		v1.POST("/", Items.Post)
+		v1.GET("/", Items.Get)
+		v1.GET("/:id", Items.GetOne)
+		v1.PUT("/:id", Items.Update)
+		v1.DELETE("/:id", Items.Delete)
+	}
 
-func heartbeat(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(heartbeatResponse{Status: "OK", Code: 200})
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"supermarketapiv1": "running",
+		})
+	})
+	router.Run()
 }

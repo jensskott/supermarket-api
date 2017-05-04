@@ -1,15 +1,15 @@
 package Items
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
 	"github.com/jensskott/supermarket-api/Cassandra"
 )
 
-// Get request for all items
-func Get(w http.ResponseWriter, r *http.Request) {
+// Get all items
+func Get(c *gin.Context) {
 	var itemList []Item
 	m := map[string]interface{}{}
 
@@ -24,5 +24,12 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		m = map[string]interface{}{}
 	}
 
-	json.NewEncoder(w).Encode(AllItemsResponse{Items: itemList})
+	// Return status not found if there is no items in list
+	if len(itemList) <= 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No Items found!"})
+		return
+	}
+
+	// Return map of items
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": itemList})
 }

@@ -17,6 +17,7 @@ func GetOne(c *gin.Context) {
 
 	id := c.Param("id")
 
+	// Itterate trough cassandra requests and add to struct
 	uuid, err := gocql.ParseUUID(id)
 	if err != nil {
 		errs = append(errs, err.Error())
@@ -37,6 +38,7 @@ func GetOne(c *gin.Context) {
 		}
 	}
 
+	// Return item data or errors
 	if found {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": &item})
 	} else {

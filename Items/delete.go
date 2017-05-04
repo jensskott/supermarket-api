@@ -16,6 +16,7 @@ func Delete(c *gin.Context) {
 
 	deleted := false
 
+	// Get cassandra UUID format and delete UUID from cassandra
 	uuid, err := gocql.ParseUUID(id)
 	if err != nil {
 		errs = append(errs, err.Error())
@@ -29,6 +30,7 @@ func Delete(c *gin.Context) {
 		}
 	}
 
+	// Return 200 or errors
 	if deleted {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Item succesfully deleted", "resourceId": uuid})
 	} else {

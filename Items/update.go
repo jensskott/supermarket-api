@@ -17,6 +17,7 @@ func Update(c *gin.Context) {
 
 	updated := false
 
+	// Convert post to int
 	quantity, _ := strconv.Atoi(c.PostForm("quantity"))
 	item := Item{Name: c.PostForm("name"), Quantity: quantity}
 
@@ -34,6 +35,7 @@ func Update(c *gin.Context) {
 
 	}
 
+	// Return 200OK or errors
 	if updated {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Item created successfully!", "resourceId": uuid})
 	} else {
